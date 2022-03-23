@@ -27,6 +27,7 @@ const createNewBlock = (data) => {
     const newTimeStamp = getNewTimeStamp();
     const newHash = Block.caculateBlockHash(newIndex, previousBlock.hash, newTimeStamp, data);
     const newBlock = new Block(newIndex, newHash, previousBlock.hash, data, newTimeStamp);
+    addBlock(newBlock);
     return newBlock;
 };
 const getHashForBlock = (aBlock) => Block.caculateBlockHash(aBlock.index, aBlock.previousHash, aBlock.timestamp, aBlock.data);
@@ -47,9 +48,13 @@ const isBlockValid = (cadidateBlock, previousBlock) => {
         return true;
     }
 };
-const addBock = (cadidateBlock) => {
+const addBlock = (cadidateBlock) => {
     if (isBlockValid(cadidateBlock, getLatestBlock())) {
         blockchain.push(cadidateBlock);
     }
 };
+createNewBlock('second block');
+createNewBlock('third block');
+createNewBlock('fourth block');
+console.log(blockchain);
 //# sourceMappingURL=index.js.map

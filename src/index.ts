@@ -10,6 +10,13 @@ class Block {
   static caculateBlockHash = (index: number, previousHash: string, timestamp: number, data: string): string =>
     CryptoJS.SHA256(index + previousHash + timestamp + data).toString();
 
+  static validateStructure = (aBlock: Block): boolean =>
+    typeof aBlock.index === 'number' &&
+    typeof aBlock.hash === 'string' &&
+    typeof aBlock.previousHash === 'string' &&
+    typeof aBlock.data === 'string' &&
+    typeof aBlock.timestamp === 'number';
+
   constructor(index: number, hash: string, previousHash: string, data: string, timestamp: number) {
     this.index = index;
     this.hash = hash;
@@ -38,4 +45,25 @@ const createNewBlock = (data: string): Block => {
   return newBlock;
 };
 
-console.log('new Blocks', createNewBlock('hello'));
+const getHashForBlock = (aBlock: Block): string =>
+  Block.caculateBlockHash(aBlock.index, aBlock.previousHash, aBlock.timestamp, aBlock.data);
+
+const isBlockValid = (cadidateBlock: Block, previousBlock: Block): boolean => {
+  if (!Block.validateStructure(cadidateBlock)) {
+    return false; // block 구조 점검
+  } else if (previousBlock.index + 1 !== cadidateBlock.index) {
+    return false;
+  } else if (previousBlock.hash !== cadidateBlock.previousHash) {
+    return false;
+  } else if (getHashForBlock(cadidateBlock) !== cadidateBlock.hash) {
+    return false; // 계산한 hash가 다른 hash 값을 갖고 있는지 확인
+  } else {
+    return true;
+  }
+};
+
+const addBock = (cadidateBlock: Block): void => {
+  if (isBlockValid(cadidateBlock, getLatestBlock())) {
+    blockchain.push(cadidateBlock);
+  }
+};
